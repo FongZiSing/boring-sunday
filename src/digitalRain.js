@@ -2,8 +2,8 @@ export default class digitalRain {
     constructor(canvasId, fontSize, fontFamily, backgroundColor, digitalColor) {
         this.canvasId = canvasId;
         this.cvs = document.getElementById(canvasId);
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
+        this.width = window.screen.width;
+        this.height = window.screen.height;
 
         this.fontSize = fontSize;
         this.fontFamily = fontFamily;
@@ -37,7 +37,7 @@ export default class digitalRain {
         this.ctx.fillStyle = "#820014";
         this.ctx.font = this.fontSize + "px " + this.fontFamily;
         for (let i = 0; i < this.columns; i++) {
-            let figure = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'J', 'Q', 'K', '♔', '♕', '♠', '♣', '♥', '♦'][Math.floor(Math.random() * 18)];
+            let figure = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'J', 'Q', 'K'][Math.floor(Math.random() * 12)];
 
             /*绘制数字(核心部分)*/
             this.ctx.fillText(figure, i * this.fontSize, this.drop[i] * this.fontSize);
