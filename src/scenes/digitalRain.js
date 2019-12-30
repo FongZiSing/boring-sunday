@@ -1,17 +1,13 @@
 export default class digitalRain {
-    constructor(canvasId, fontSize, fontFamily, backgroundColor, digitalColor) {
-        this.canvasId = canvasId;
-        this.cvs = document.getElementById(canvasId);
-        this.width = Math.max(window.innerWidth, window.screen.width);
-        this.height = Math.max(window.innerHeight, window.screen.height);
-
+    constructor(canvasElem, fontSize, fontFamily, backgroundColor, digitalColor) {
+        this.cvs = canvasElem;
         this.fontSize = fontSize;
         this.fontFamily = fontFamily;
         this.backgroundColor = backgroundColor;
         this.backgroundColorString = 'rgba(' + backgroundColor.join(', ') + ', 0.15)';
         this.digitalColor = digitalColor;
 
-        this.columns = Math.ceil(this.width / fontSize);
+        this.columns = Math.ceil(this.cvs.width / fontSize);
         this.drop = [];
 
         for (let i = 0; i < this.columns; ++i) {
@@ -21,10 +17,8 @@ export default class digitalRain {
 
     onload() {
         if (this.cvs.getContext) {
-            this.cvs.width = this.width;
-            this.cvs.height = this.height;
             this.ctx = this.cvs.getContext('2d');
-            window.onload = this.__onload.bind(this);
+            window.onload ? (window.onload = this.__onload.bind(this)) : this.__onload();
         }
     }
 
@@ -54,9 +48,9 @@ export default class digitalRain {
 
     }
 
-    backgroundRender(color = this.backgroundColorString) {
-        this.ctx.fillStyle = color;
-        this.ctx.fillRect(0, 0, this.width, this.height);
+    backgroundRender(color) {
+        this.ctx.fillStyle = color || this.backgroundColorString;
+        this.ctx.fillRect(0, 0, this.cvs.width, this.cvs.height);
     }
 
     contentRender() {
@@ -65,7 +59,7 @@ export default class digitalRain {
         for (let i = 0; i < this.columns; i++) {
             let figure = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'J', 'Q', 'K'][Math.floor(Math.random() * 12)];
             this.ctx.fillText(figure, i * this.fontSize, this.drop[i] * this.fontSize);
-            if (this.drop[i] * this.fontSize > this.height || Math.random() > 0.95) {
+            if (this.drop[i] * this.fontSize > this.cvs.height || Math.random() > 0.95) {
                 this.drop[i] = 0;
             }
             this.drop[i]++;
