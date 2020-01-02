@@ -21,24 +21,24 @@ export default class digitalRain {
   }
 
   onload() {
-    if (this.ctx) {
+    if (this.ctx && !this.timer) {
       this.timer = setInterval(this.render.bind(this), this.interval);
     }
   }
 
-  unload(smooth) {
+  unload() {
     if (!this.timer) return;
     clearInterval(this.timer);
-    if (smooth) {
-      for (let i = 1; i <= 20; ++i) {
-        setTimeout(() => {
-          this.contentRender();
-          this.backgroundRender(this.bgcolor.feature + (.15 + (.85 * i / 20.0)) + ')');
-        }, (this.interval + 10) * i);
-      }
-    }
+    // if (smooth) {
+    //   for (let i = 1; i <= 20; ++i) {
+    //     setTimeout(() => {
+    //       this.contentRender();
+    //       this.backgroundRender(this.bgcolor.feature + (.15 + (.85 * i / 20.0)) + ')');
+    //     }, (this.interval + 10) * i);
+    //   }
+    // }
 
-    this.timer = undefined;
+    this.timer = 0;
   }
 
   backgroundRender(color) {

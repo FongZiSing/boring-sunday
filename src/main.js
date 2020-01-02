@@ -12,12 +12,6 @@ scenes.register('fireWork', new fireWork(canvas));
 scenes.play();
 
 
-const btnPrev = document.getElementById("button__prev");
-btnPrev.addEventListener('click', () => scenes.prev());
-
-const btnNext = document.getElementById("button__next");
-btnNext.addEventListener('click', () => scenes.next());
-
 const btnPlay = document.getElementById("button__play");
 const goon = btnPlay.firstElementChild;
 const halt = btnPlay.lastElementChild;
@@ -29,3 +23,24 @@ btnPlay.addEventListener('click', () => {
 });
 
 
+const btnPrev = document.getElementById("button__prev");
+btnPrev.addEventListener('click', () => {
+  scenes.prev();
+  if (goon.state && !halt.state) {
+    goon.state ^= true;
+    halt.state ^= true;
+    goon.style.display = 'none';
+    halt.style.display = 'block';
+  }
+});
+
+const btnNext = document.getElementById("button__next");
+btnNext.addEventListener('click', () => {
+  scenes.next();
+  if (goon.state && !halt.state) {
+    goon.state ^= true;
+    halt.state ^= true;
+    goon.style.display = 'none';
+    halt.style.display = 'block';
+  }
+});

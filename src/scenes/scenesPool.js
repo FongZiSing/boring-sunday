@@ -2,6 +2,7 @@ export default class scenesPool {
     constructor() {
         this.scenes = [];
         this.current = -1;
+        this.running = false;
     }
 
     find(key) {
@@ -10,11 +11,13 @@ export default class scenesPool {
     }
 
     play() {
-        this.scenes[this.current] && this.scenes[this.current].scene.onload();
+        !this.running && this.scenes[this.current] && this.scenes[this.current].scene.onload();
+        this.running = true;
     }
 
     stop() {
         this.scenes[this.current] && this.scenes[this.current].scene.unload();
+        this.running = false;
     }
 
     register(key, scene) {
@@ -26,11 +29,13 @@ export default class scenesPool {
         this.scenes[this.current].scene.unload();
         this.current = (this.current + 1) % this.scenes.length;
         this.scenes[this.current].scene.onload();
+        this.running = true;
     }
 
     prev() {
         this.scenes[this.current].scene.unload();
         this.current = (this.scenes.length + this.current - 1) % this.scenes.length;
         this.scenes[this.current].scene.onload();
+        this.running = true;
     }
 }
