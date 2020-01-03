@@ -4,7 +4,6 @@ export default class digitalRain {
     this.cvs = canvas;
     this.ctx = canvas.getContext('2d');
     this.__init(options);
-    console.log(this)
   }
 
   __init(options) {
@@ -20,8 +19,8 @@ export default class digitalRain {
     this.ctx.font = `${this.options.font.size}px ${this.options.font.family}`;
   }
 
-  __background_render(color) {
-    this.ctx.fillStyle = color || this.options.background;
+  __background_render() {
+    this.ctx.fillStyle = this.options.background;
     this.ctx.fillRect(0, 0, this.cvs.width, this.cvs.height);
   }
 
