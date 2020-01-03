@@ -1,21 +1,18 @@
-let backgroundColorBuf;
+const drop = [];
 export default class digitalRain {
   constructor(canvas, options) {
     this.cvs = canvas;
-    this.ctx = canvas.getContext && canvas.getContext('2d');
+    this.ctx = canvas.getContext('2d');
     this.__init(options);
+    console.log(this)
   }
 
   __init(options) {
-    this.options = JSON.parse('{ "font": { "family": "Agency FB", "color": "#06EB00", "size": 16 }, "background": { "color": [0, 0, 0] }, "interval": 50 }');
+    this.options = JSON.parse('{ "font": { "family": "Agency FB", "color": "#06EB00", "size": 16 }, "background": "rgba(0, 0, 0, .15)", "interval": 50 }');
     Object.prototype.toString.call(options) === '[object Object]' && (this.options = Object.assign(this.options, options));
-    backgroundColorBuf = `rgba(${this.options.background.color.join(', ')}, `;
-    this.backgroundColor = backgroundColorBuf + '.15)';
-    this.fontsize = this.options.font.size;
     this.columns = Math.ceil(this.cvs.width / this.options.font.size);
-    this.drop = [];
     for (let i = 0; i < this.columns; ++i) {
-      this.drop[i] = Math.floor(Math.random() * 20);
+      drop[i] = Math.floor(Math.random() * 20);
     }
   }
 
@@ -24,7 +21,7 @@ export default class digitalRain {
   }
 
   __background_render(color) {
-    this.ctx.fillStyle = color || this.backgroundColor;
+    this.ctx.fillStyle = color || this.options.background;
     this.ctx.fillRect(0, 0, this.cvs.width, this.cvs.height);
   }
 
@@ -32,14 +29,13 @@ export default class digitalRain {
     this.ctx.fillStyle = this.options.font.color;
     for (let i = 0; i < this.columns; i++) {
       const figure = Math.floor(Math.random() * 10);
-      this.ctx.fillText(figure, i * this.fontsize, this.drop[i] * this.fontsize);
-      if (this.drop[i] * this.fontsize > this.cvs.height || Math.random() > 0.95) {
-        this.drop[i] = 0;
-      }
-      this.drop[i]++;
+      this.ctx.fillText(figure, i * this.options.font.size, drop[i] * this.options.font.size);
+      if (drop[i] * this.options.font.size > this.cvs.height || Math.random() > .95)
+        drop[i] = 0;
+      else
+        drop[i]++;
     }
   }
-
 
   render = () => {
     this.__background_render();
@@ -51,20 +47,12 @@ export default class digitalRain {
       this.__ready();
       this.timer = setInterval(this.render, this.options.interval);
     }
-
   }
 
   stop = () => {
-    if (!this.timer) return;
-    clearInterval(this.timer);
-    // if (smooth) {
-    //   for (let i = 1; i <= 20; ++i) {
-    //     setTimeout(() => {
-    //       this.__content_render();
-    //       this.__background_render(backgroundColorBuf + (.15 + (.85 * i / 20.0)) + ')');
-    //     }, (this.options.interval + 10) * i);
-    //   }
-    // }
-    this.timer = 0;
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = 0;
+    }
   }
 };

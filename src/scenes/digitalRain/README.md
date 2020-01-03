@@ -18,9 +18,7 @@ const rain = new digitalRain(canvas, {
     color: '#820014',
     size: 16
   },
-  background: {
-    color: [255, 255, 255]
-  },
+  background: 'rgba(255, 255, 255, .15)',
   interval: 50
 });
 ```
@@ -68,18 +66,15 @@ rain.run();
         color: "#06EB00",
         size: 16
     },
-    background: {
-        color: [0, 0, 0],
-        fn: () => { "to be continue..." }
-    },
+    background: 'rgba(0, 0, 0, .15)',
     interval: 50
 }
 ```
 <br/>
 
 ##### :green_book: options table
-option | type | includes
+option | type | default
 ------ | ---- | --------
-font | Object | `font.family`: default **Agency FB**<br/>`font.color`: default <font color='#06EB00'>#820014</font><br/>`font.size`: default **16px**
-background | Object | `background.color`: <font color='red'>R</font><font color='green'>G</font><font color='blue'>B</font>, defalut **[0, 0, 0]**<br/>`background.fn`: custom background drawing function, maybe supported next time.
-interval | Number | default **50**
+font | *Object* | `font.family` Agency FB<br/>`font.color` #06EB00<br/>`font.size` 16px
+background | *String* | rgba(0, 0, 0, .15)
+interval | *Number* | 50
