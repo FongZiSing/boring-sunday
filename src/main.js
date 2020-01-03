@@ -1,5 +1,5 @@
 import digitalRain from './scenes/digitalRain/index.js';
-import fireWork from './scenes/fireWorks.js';
+import fireWork from './scenes/fireWork/index.js';
 import scenesPool from './scenes/scenesPool.js'
 
 const canvas = document.getElementById('background');
