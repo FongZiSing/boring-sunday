@@ -136,13 +136,13 @@ export default class fireWork {
     this.ctx.fillRect(0, 0, this.cvs.width, this.cvs.height);
   }
 
-  onload() {
+  run() {
     if (this.ctx) {
       this.timer = setInterval(this.render.bind(this), this.interval);
     }
   }
 
-  unload() {
+  stop() {
     if (!this.timer) return;
     clearInterval(this.timer);
   }

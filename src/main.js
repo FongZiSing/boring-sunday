@@ -1,4 +1,4 @@
-import digitalRain from './scenes/digitalRain.js';
+import digitalRain from './scenes/digitalRain/index.js';
 import fireWork from './scenes/fireWorks.js';
 import scenesPool from './scenes/scenesPool.js'
 
@@ -7,7 +7,7 @@ canvas.width = Math.max(window.innerWidth, window.screen.width);
 canvas.height = Math.max(window.innerHeight, window.screen.availHeight);
 
 const scenes = new scenesPool();
-scenes.register('digitalRain', new digitalRain(canvas, 16, "Agency FB", [255, 255, 255], "#820014"));
+scenes.register('digitalRain', new digitalRain(canvas, {interval: 45}));
 scenes.register('fireWork', new fireWork(canvas));
 scenes.play();
 
