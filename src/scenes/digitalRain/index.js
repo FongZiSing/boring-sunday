@@ -8,7 +8,7 @@ export default class digitalRain {
 
   __init(options) {
     this.options = JSON.parse('{ "font": { "family": "Agency FB", "color": "#06EB00", "size": 16 }, "background": "rgba(0, 0, 0, .15)", "interval": 50 }');
-    Object.prototype.toString.call(options) === '[object Object]' && (this.options = Object.assign(this.options, options));
+    options && Object.prototype.toString.call(options) === '[object Object]' && (this.options = Object.assign(this.options, options));
     this.columns = Math.ceil(this.cvs.width / this.options.font.size);
     for (let i = 0; i < this.columns; ++i) {
       drop[i] = Math.floor(Math.random() * 20);

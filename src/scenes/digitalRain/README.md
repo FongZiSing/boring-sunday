@@ -61,13 +61,13 @@ rain.run();
 &emsp;Example
 ```js
 {
-    font: {
-        family: "Agency FB",
-        color: "#06EB00",
-        size: 16
-    },
-    background: 'rgba(0, 0, 0, .15)',
-    interval: 50
+  font: {
+    family: "Agency FB",
+    color: "#06EB00",
+    size: 16
+  },
+  background: 'rgba(0, 0, 0, .15)',
+  interval: 50
 }
 ```
 <br/>
@@ -75,6 +75,6 @@ rain.run();
 ##### :green_book: options table
 option | type | default
 ------ | ---- | --------
-font | *Object* | `font.family` Agency FB<br/>`font.color` #06EB00<br/>`font.size` 16px
-background | *String* | rgba(0, 0, 0, .15)
-interval | *Number* | 50
+font | *Object* | `font.family`: `Agency FB`<br/>`font.color`: `#06EB00`<br/>`font.size`: `16px`
+background | *String* | `rgba(0, 0, 0, .15)`
+interval | *Number* | `50`

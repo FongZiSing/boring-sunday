@@ -7,8 +7,8 @@ canvas.width = Math.max(window.innerWidth, window.screen.width);
 canvas.height = Math.max(window.innerHeight, window.screen.availHeight);
 
 const scenes = new scenesPool();
-scenes.register('digitalRain', new digitalRain(canvas, {interval: 45}));
 scenes.register('fireWork', new fireWork(canvas));
+scenes.register('digitalRain', new digitalRain(canvas));
 scenes.play();
 
 
@@ -21,7 +21,6 @@ btnPlay.addEventListener('click', () => {
   (goon.state ^= true) ? (goon.style.display = 'block', scenes.stop()) : (goon.style.display = 'none');
   (halt.state ^= true) ? (halt.style.display = 'block', scenes.play()) : (halt.style.display = 'none');
 });
-
 
 const btnPrev = document.getElementById("button__prev");
 btnPrev.addEventListener('click', () => {
