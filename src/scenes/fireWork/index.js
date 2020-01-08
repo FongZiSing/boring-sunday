@@ -1,133 +1,197 @@
+const PI = Math.PI;
 const PI2 = Math.PI * 2;
+const PI7_8 = Math.PI * 7 / 8;
+const PI15_32 = Math.PI * 15 / 32;
+const PI_16 = Math.PI / 16;
+
+class Shape {
+  constructor() { this.Set = []; }
+  push(func) { this.Set.push(func); }
+  random() { return this.Set[Math.floor(Math.random() * this.Set.length)]; }
+};
+
+
+
+function circle(θ) {
+  return 1;
+}
+
+function cardioid(θ) {
+  return 1 + Math.sin(θ);
+}
+
+const rose = [];
+function roseCurve(θ, n = 3) {
+  rose[n] || (rose[n] = {});
+  rose[n][θ] || (rose[n][θ] = Math.sin(n * θ));
+  return rose[n][θ];
+};
+
+const butterfly = {};
+function butterflyCurve(θ) {
+  butterfly[θ] || (butterfly[θ] = Math.exp(Math.cos(θ)) - 2 * Math.cos(4 * θ) + Math.pow(Math.sin(θ / 12), 5));
+  return butterfly[θ];
+}
+
+const lemn = {};
+function lemniscate(θ) {
+  lemn[θ] || (lemn[θ] = Math.sqrt(Math.cos(2 * θ)));
+  return lemn[θ];
+}
+
+const myShapeSet = new Shape();
+myShapeSet.push({ func: circle, scope: [0, PI2] });
+myShapeSet.push({ func: cardioid, scope: [0, PI2] });
+myShapeSet.push({ func: function (θ) { return roseCurve(θ, 3); }, scope: [0, PI] });
+myShapeSet.push({ func: function (θ) { return roseCurve(θ, 2); }, scope: [0, PI2] });
+myShapeSet.push({ func: function (θ) { return roseCurve(θ, 5); }, scope: [0, PI] });
+myShapeSet.push({ func: function (θ) { return roseCurve(θ, 1.5); }, scope: [0, 2 * PI2] });
+myShapeSet.push({ func: lemniscate, scope: [0, PI2] });
+myShapeSet.push({ func: butterflyCurve, scope: [0, PI2] });
+
+
+
 class Shard {
-  constructor(context, x, y, len, hue, order) {
+  constructor(context, size, lightness, color, angle, speed, shape, frame) {
     this.ctx = context;
-    this.len = len;
-    this.angle = PI2 * order;
-    this.xSpeed = Math.cos(this.angle);
-    this.ySpeed = Math.sin(this.angle);
-    this.__prepare(x, y, hue);
+    this.maxSize = size;
+    this.maxLightness = lightness;
+    this.color = color;
+    this.angle = angle;
+    this.shape = shape;
+    this.speed = speed;
+    this.frame = frame;
+    this.speedX = speed * shape(angle) * Math.cos(angle);
+    this.speedY = speed * shape(angle) * Math.sin(angle);
   }
 
-  __prepare(x, y, hue) {
-    this.x = x + Math.cos(this.angle) * this.len;
-    this.y = y + Math.sin(this.angle) * this.len;
-    this.size = 4;
-    this.half = 2;
-    this.hue = hue;
-    this.ready = true;
+  __linear(src, dst, coeff) {
+    return src + (dst - src) * coeff;
   }
 
   __update() {
-    if (this.ready) {
-      this.x += this.xSpeed;
-      this.y += this.ySpeed;
-      if (this.size > .2) {
-        this.size = this.size - .2;
-        this.half = this.half - .1;
-      } else
-        this.ready = false;
-      return true;
+    this.index++;
+    if (this.index >= this.frame) {
+      this.feedback && this.feedback('finish');
+    } else {
+      const coeff = this.index / this.frame;
+      const param1 = coeff * coeff;
+      const param2 = Math.sin(this.__linear(0, PI7_8, coeff));
+      this.x += this.__linear(this.speedX, 0, param1);
+      this.y += this.__linear(this.speedY, 0, param1);
+      this.lightness = Math.floor(this.__linear(0, this.maxLightness, param2));
+      this.size = Math.floor(this.__linear(0, this.maxSize, param2));
     }
   }
 
-  render = () => {
-    if (this.__update()) {
-      this.ctx.fillStyle = `hsl(${this.hue}, 80%, 60%)`;
-      this.ctx.beginPath();
-      this.ctx.fillRect(this.x - this.half, this.y - this.half, this.size, this.size);
-      this.ctx.closePath();
-      this.ctx.fill();
-    }
+  bomb(x, y) {
+    this.feedback && this.feedback('exploding');
+    this.x = x;
+    this.y = y;
+    this.lightness = 0;
+    this.size = 0;
+    this.index = 0;
+  }
+
+  render() {
+    this.ctx.fillStyle = `hsl(${this.color}, 100%, ${this.lightness}%)`;
+    this.ctx.beginPath();
+    this.ctx.arc(this.x, this.y, this.size, 0, PI2);
+    this.ctx.fill();
+    this.__update();
   }
 }
 
+
+
 class Rocket {
-  constructor(context, x0, x1, y) {
+  constructor(context, range, altitude, shardNum) {
     this.ctx = context;
-    this.orignal = { x0, x1, y, θ: Math.PI * 15 / 32, dθ: Math.PI / 16 };
-    this.explode = false;
-    this.shardNum = 20 + Math.floor(Math.random() * 10);
+    this.range = range;
+    this.altitude = altitude;
+    this.shardNum = shardNum;
+    this.restart();
+
     this.shards = [];
-    this.__prepare();
-  }
-
-  __prepare() {
-    this.x = this.orignal.x0 + Math.floor(Math.random() * (this.orignal.x1 - this.orignal.x0));
-    this.y = this.orignal.y;
-    this.size = 2;
-    this.hue = Math.floor(Math.random() * 360);
-    this.angle = this.orignal.θ + Math.random() * this.orignal.dθ;
-    this.speed = 10 + Math.random() * 6;
-    this.xSpeed = Math.cos(this.angle) * this.speed;
-    this.ySpeed = -Math.sin(this.angle) * this.speed;
-  }
-
-  __explode() {
-    const sphere = 20 + 30 * Math.random();
+    const maxSize = 2.5;
+    const maxLightness = 40;
+    const speed = 2;
+    const { func, scope } = myShapeSet.random();
+    const frame = 50;
     for (let i = 0; i < this.shardNum; ++i) {
-      this.shards.push(new Shard(this.ctx, this.x, this.y, sphere, this.hue, i / this.shardNum));
+      const angle = scope[0] + scope[1] * i / this.shardNum;
+      this.shards.push(new Shard(this.ctx, maxSize, maxLightness, this.color, angle, speed, func, frame));
     }
+    this.shards[this.shards.length - 1].feedback = this.__guard.bind(this);
   }
 
-  __explode_again() {
-    this.shards.forEach(shard => shard.__prepare(this.x, this.y, this.hue));
+
+  restart() {
+    const speed = 10 + Math.random() * 6;
+    const angle = PI15_32 + Math.random() * PI_16;
+    this.xSpeed = Math.cos(angle) * speed;
+    this.ySpeed = -Math.sin(angle) * speed;
+    this.color = Math.floor(Math.random() * 360);
+    this.size = 2;
+    this.x = this.range[0] + Math.floor(Math.random() * (this.range[1] - this.range[0]));
+    this.y = this.altitude;
+    this.state = 'waiting';
+  }
+
+  __guard(state) {
+    this.state = state;
   }
 
   __update() {
     if (this.ySpeed < 0) {
-      this.x = this.x + this.xSpeed;
-      this.y = this.y + this.ySpeed;
+      this.x += this.xSpeed;
+      this.y += this.ySpeed;
       this.ySpeed += 0.15;
       this.size -= 0.01;
-    } else {
-      this.shards.length ? this.__explode_again() : this.__explode();
-      this.explode = true;
     }
+    else if (this.state == 'finish')
+      this.restart();
+    else if (this.state == 'waiting')
+      this.shards.forEach(shard => shard.bomb(this.x, this.y));
   }
 
   render = () => {
-    this.ctx.save();
-    if (this.explode) {
-      this.shards.forEach(shard => (shard.render(), !shard.ready && (this.explode = false, this.__prepare())));
-    } else {
-      this.__update();
-      this.ctx.fillStyle = `hsl(${this.hue}, 100%, 40%)`;
+    if (this.state == 'exploding') {
+      this.shards.forEach(Shard => Shard.render());
+    }
+    else {
+      this.ctx.fillStyle = `hsl(${this.color}, 100%, 40%)`;
       this.ctx.beginPath();
       this.ctx.arc(this.x, this.y, this.size, 0, PI2);
-      this.ctx.closePath();
       this.ctx.fill();
     }
-    this.ctx.restore();
+    this.__update();
   }
 }
 
-export default class fireWork {
-  constructor(canvas, options) {
+export default class Scene {
+  constructor(canvas) {
     this.cvs = canvas;
     this.ctx = this.cvs.getContext('2d');
-    this.__init(options);
-  }
-
-  __init(options) {
-    this.options = JSON.parse('{ "count": 30, "background": "black", "interval": 20 }');
-    this.options.launch = { x0: this.cvs.width / 5, x1: this.cvs.width * 4 / 5, y: this.cvs.height };
-    options && Object.prototype.toString.call(options) === '[object Object]' && (this.options = Object.assign(this.options, options));
+    const range = [this.cvs.width / 2, this.cvs.width / 2];
+    const altitude = this.cvs.height;
+    const rocketNum = 12;
+    const shardNum = 50;
     this.firework = [];
-    for (let i = 0; i < this.options.count; ++i) {
-      this.firework.push(new Rocket(this.ctx, this.options.launch.x0, this.options.launch.x1, this.options.launch.y));
+    for (let i = 0; i < rocketNum; ++i) {
+      this.firework.push(new Rocket(this.ctx, range, altitude, shardNum));
     }
   }
 
-  render = () => {
-    this.ctx.fillStyle = this.options.background;
+  render() {
+    this.ctx.fillStyle = "rgba(0, 0, 0, .4)";
     this.ctx.fillRect(0, 0, this.cvs.width, this.cvs.height);
     this.firework.forEach(rocket => rocket.render());
   }
 
   run() {
     if (this.ctx) {
-      this.timer = setInterval(this.render, this.options.interval);
+      this.timer = setInterval(this.render.bind(this), 10);
     }
   }
 

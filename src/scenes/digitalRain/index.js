@@ -36,19 +36,19 @@ export default class digitalRain {
     }
   }
 
-  render = () => {
+  render () {
     this.__background_render();
     this.__content_render();
   }
 
-  run = () => {
+  run() {
     if (this.ctx && !this.timer) {
       this.__ready();
-      this.timer = setInterval(this.render, this.options.interval);
+      this.timer = setInterval(this.render.bind(this), this.options.interval);
     }
   }
 
-  stop = () => {
+  stop() {
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = 0;
