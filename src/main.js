@@ -1,12 +1,15 @@
 import digitalRain from './scenes/digitalRain/index.js';
 import fireWork from './scenes/fireWork/index.js';
-import scenesPool from './scenes/scenesPool.js'
+import lifeGame from './scenes/lifeGame/index.js';
+import scenesPool from './scenes/scenesPool.js';
+
 
 const canvas = document.getElementById('background');
 canvas.width = Math.max(window.innerWidth, window.screen.width);
 canvas.height = Math.max(window.innerHeight, window.screen.availHeight);
 
 const scenes = new scenesPool();
+scenes.register('lifeGame', new lifeGame(canvas));
 scenes.register('fireWork', new fireWork(canvas));
 scenes.register('digitalRain', new digitalRain(canvas));
 scenes.play();
